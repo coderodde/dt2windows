@@ -29,26 +29,51 @@ static size_t computeEditDistance(std::string const& string1, std::string const&
                                string2.length());
 }
 
-void net::coderodde::dt2::TagEntryList::operator<<(TagEntry const& tagEntry) {
-    m_entries.push_back(tagEntry);
-}
+namespace net {
+namespace coderodde {
+namespace dt2 {
 
-TagEntry net::coderodde::dt2::TagEntryList::operator[](std::string const& tag) const {
-    if (m_entries.empty()) {
-        throw std::runtime_error("No entries available.");
+    void TagEntryList::operator<<(TagEntry const& tagEntry) {
+        m_entries.push_back(tagEntry);
     }
 
-    TagEntry bestTagEntry;
-    size_t bestEditDistance = std::numeric_limits<size_t>::max();
-
-    for (TagEntry const& tagEntry : m_entries) {
-        size_t currentEditDistance = computeEditDistance(tag, tagEntry.getTag());
-
-        if (bestEditDistance > currentEditDistance) {
-            bestEditDistance = currentEditDistance;
-            bestTagEntry = tagEntry;
+    TagEntry TagEntryList::operator[](std::string const& tag) const {
+        if (m_entries.empty()) {
+            throw std::runtime_error("No entries available.");
         }
+
+        TagEntry bestTagEntry;
+        size_t bestEditDistance = std::numeric_limits<size_t>::max();
+
+        for (TagEntry const& tagEntry : m_entries) {
+            size_t currentEditDistance = computeEditDistance(tag, tagEntry.getTag());
+
+            if (bestEditDistance > currentEditDistance) {
+                bestEditDistance = currentEditDistance;
+                bestTagEntry = tagEntry;
+            }
+        }
+
+        return bestTagEntry;
     }
 
-    return bestTagEntry;
-}
+    std::vector<TagEntry>::const_iterator TagEntryList::begin() const {
+        return m_entries.cbegin();
+    }
+
+    std::vector<TagEntry>::const_iterator TagEntryList::end() const {
+        return m_entries.cend();
+    }
+
+    void TagEntryList::sort() {
+        std::stable_sort(m_entries.begin(),
+            m_entries.end(),
+            [](TagEntry const& tagEntry1,
+                TagEntry const& tagEntry2) {
+            return tagEntry1.getTag() < tagEntry2.getTag();
+        });
+    }
+
+} // End of namespace 'net::coderodde::dt2'.
+} // End of namespace 'net::coderodde'.
+} // End of namespace 'net'.

@@ -14,9 +14,8 @@ namespace dt2 {
     public:
         void operator<<(TagEntry const& tagEntry);
         TagEntry operator[](std::string const& tag) const;
-        size_t size() const;
-        std::vector<TagEntry>::const_iterator cbegin() const;
-        std::vector<TagEntry>::const_iterator cend() const;
+        std::vector<TagEntry>::const_iterator begin() const;
+        std::vector<TagEntry>::const_iterator end() const;
         void sort();
 
     private:

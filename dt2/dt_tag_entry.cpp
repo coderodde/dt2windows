@@ -47,48 +47,7 @@ namespace dt2 {
     std::string const& TagEntry::getDirectory() const {
         return m_directory;
     }
-}
-}
-}
-/*
-net::coderodde::dt2::TagEntry::TagEntry(std::string const& tag, 
-                                        std::string const& directory)
-:
-m_tag(tag),
-m_directory(directory) {
 
-}
-
-net::coderodde::dt2::TagEntry::TagEntry()
-:
-m_tag(""),
-m_directory("") {
-
-}
-
-net::coderodde::dt2::TagEntry::TagEntry(TagEntry const& other)
-    : 
-    m_tag(other.m_tag),
-    m_directory(other.m_directory) {
-
-}
-
-net::coderodde::dt2::TagEntry& net::coderodde::dt2::TagEntry::operator=(TagEntry&& other) {
-    m_tag = std::move(other.m_tag);
-    m_directory = std::move(other.m_directory);
-    return *this;
-}
-
-net::coderodde::dt2::TagEntry& net::coderodde::dt2::TagEntry::operator=(TagEntry const& other) {
-    m_tag = other.m_tag;
-    m_directory = other.m_directory;
-    return *this;
-}
-
-std::string const& net::coderodde::dt2::TagEntry::getTag() const {
-    return m_tag;
-}
-
-std::string const& net::coderodde::dt2::TagEntry::getDirectory() const {
-    return m_directory;
-}*/
+} // End of namespace 'net::coderodde::dt2'.
+} // End of namespace 'net::coderodde'.
+} // End of namespace 'net'.
