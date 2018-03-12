@@ -1,6 +1,56 @@
 #include "dt_tag_entry.hpp"
 #include <string>
+#include <utility>
 
+namespace net {
+namespace coderodde {
+namespace dt2 {
+
+    TagEntry::TagEntry(std::string const& tag,
+        std::string const& directory)
+        :
+        m_tag(tag),
+        m_directory(directory) {
+
+    }
+
+    TagEntry::TagEntry()
+        :
+        m_tag(""),
+        m_directory("") {
+
+    }
+
+    TagEntry::TagEntry(TagEntry const& other)
+        :
+        m_tag(other.m_tag),
+        m_directory(other.m_directory) {
+
+    }
+
+    TagEntry& TagEntry::operator=(TagEntry&& other) {
+        m_tag = std::move(other.m_tag);
+        m_directory = std::move(other.m_directory);
+        return *this;
+    }
+
+    TagEntry& TagEntry::operator=(TagEntry const& other) {
+        m_tag = other.m_tag;
+        m_directory = other.m_directory;
+        return *this;
+    }
+
+    std::string const& TagEntry::getTag() const {
+        return m_tag;
+    }
+
+    std::string const& TagEntry::getDirectory() const {
+        return m_directory;
+    }
+}
+}
+}
+/*
 net::coderodde::dt2::TagEntry::TagEntry(std::string const& tag, 
                                         std::string const& directory)
 :
@@ -8,3 +58,37 @@ m_tag(tag),
 m_directory(directory) {
 
 }
+
+net::coderodde::dt2::TagEntry::TagEntry()
+:
+m_tag(""),
+m_directory("") {
+
+}
+
+net::coderodde::dt2::TagEntry::TagEntry(TagEntry const& other)
+    : 
+    m_tag(other.m_tag),
+    m_directory(other.m_directory) {
+
+}
+
+net::coderodde::dt2::TagEntry& net::coderodde::dt2::TagEntry::operator=(TagEntry&& other) {
+    m_tag = std::move(other.m_tag);
+    m_directory = std::move(other.m_directory);
+    return *this;
+}
+
+net::coderodde::dt2::TagEntry& net::coderodde::dt2::TagEntry::operator=(TagEntry const& other) {
+    m_tag = other.m_tag;
+    m_directory = other.m_directory;
+    return *this;
+}
+
+std::string const& net::coderodde::dt2::TagEntry::getTag() const {
+    return m_tag;
+}
+
+std::string const& net::coderodde::dt2::TagEntry::getDirectory() const {
+    return m_directory;
+}*/

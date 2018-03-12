@@ -1,7 +1,11 @@
 #include "dt_tag_entry.hpp"
 #include "dt_tag_entry_list.hpp"
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -14,7 +18,27 @@ const std::string FLAG_LIST_TAGS_NO_DIRECTORIES = "-n";
 const std::string TAG_ENTRY_LIST_FILE_LOCATION = "\\.dt\\table";
 const size_t MAXIMUM_TAG_LENGTH = 12;
 
+using net::coderodde::dt2::TagEntry;
 using net::coderodde::dt2::TagEntryList;
+
+//// https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
+static inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+static inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+static inline void trim(std::string &s) {
+    ltrim(s);
+    rtrim(s);
+}
+///////////////////////////////////////////////////////////////////////////////
 
 static void operator>>(std::ifstream& inputFileStream, TagEntryList& tagEntryList) {
     char lineBuffer[MAXIMUM_TAG_LENGTH + MAX_PATH];
@@ -25,22 +49,31 @@ static void operator>>(std::ifstream& inputFileStream, TagEntryList& tagEntryLis
         std::string tag;
         std::string directory;
         ss << lineBuffer;
-        ss >> tag >> directory;
+        ss >> tag;
+        char directoryBuffer[MAX_PATH];
+        ss.getline(directoryBuffer, MAX_PATH);
+        directory = directoryBuffer;
+        trim(directory);
         TagEntry tagEntry(tag, directory);
         tagEntryList << tagEntry;
     }
 }
 
-static void listTagsAndDirectories() {
+static void listTagsAndDirectories(TagEntryList& tagEntryList) {
 
 }
 
-static void listTagsOnly() {
+static void listTagsOnly(TagEntryList& tagEntryList) {
 
 }
 
-static void matchTag(std::string const& tag) {
-
+static std::string matchTag(TagEntryList const& tagEntryList, std::string const& tag) {
+    try {
+        TagEntry bestTagEntry = tagEntryList[tag];
+        return bestTagEntry.getDirectory();
+    } catch (std::runtime_error const& err) {
+        std::exit(1);
+    }
 }
 
 static std::string getTagEntryListFileName() {
@@ -60,27 +93,28 @@ static std::string getTagEntryListFileName() {
 }
 
 int main(int argc, char* argv[]) {
-    /*if (argc == 1 || argc >= 3) {
+    if (argc != 2) {
         // Since dt requires only one argument, silently exit if any other
         // number of arguments passed.
         return 0;
-    }*/
+    }
 
-    std::string flag = "yeah"; // argv[1];
+    std::string flag = argv[1];
     std::string tagEntryListFileName = getTagEntryListFileName();
     std::ifstream ifs(tagEntryListFileName.c_str(), std::ifstream::in);
     TagEntryList tagEntryList;
     ifs >> tagEntryList;
 
     if (flag == FLAG_LIST_TAGS_AND_DIRECTORIES) {
-        listTagsAndDirectories();
+        listTagsAndDirectories(tagEntryList);
     }
     else if (flag == FLAG_LIST_TAGS_NO_DIRECTORIES) {
-        listTagsOnly();
+        listTagsOnly(tagEntryList);
     }
     else {
-        //std::string targetTag = argv[1];
-        //matchTag(targetTag);
+        std::string targetTag = "mcs"; // argv[1];
+        std::string bestDirectory = matchTag(tagEntryList, targetTag);
+        std::cout << bestDirectory;
     }
 
     std::cin.get();

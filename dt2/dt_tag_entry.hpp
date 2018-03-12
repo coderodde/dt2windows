@@ -10,6 +10,12 @@ namespace dt2 {
     class TagEntry {
     public:
         TagEntry(std::string const& tag, std::string const& directory);
+        TagEntry();
+        TagEntry(TagEntry const& other);
+        TagEntry& operator=(TagEntry&& other);
+        TagEntry& operator=(TagEntry const& other);
+        std::string const& getTag() const;
+        std::string const& getDirectory() const;
 
     private:
         std::string m_tag;
