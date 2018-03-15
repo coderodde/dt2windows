@@ -20,7 +20,7 @@ const std::string FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED = "-S";
 const std::string FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED = "-s";
 const std::string FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED_BY_DIRS = "-d";
 const std::string TAG_ENTRY_LIST_FILE_LOCATION = "\\.dt\\table";
-const size_t MAXIMUM_TAG_LENGTH = 12;
+const size_t LINE_BUFFER_CAPACITY = 1024;
 
 using net::coderodde::dt2::TagEntry;
 using net::coderodde::dt2::TagEntryList;
@@ -45,10 +45,10 @@ static inline void trim(std::string &s) {
 ///////////////////////////////////////////////////////////////////////////////
 
 static void operator>>(std::ifstream& inputFileStream, TagEntryList& tagEntryList) {
-    char lineBuffer[MAXIMUM_TAG_LENGTH + MAX_PATH];
+    char lineBuffer[LINE_BUFFER_CAPACITY];
 
     while (!inputFileStream.eof() && !inputFileStream.bad() && !inputFileStream.fail()) {
-        inputFileStream.getline(lineBuffer, MAXIMUM_TAG_LENGTH + MAX_PATH);
+        inputFileStream.getline(lineBuffer, LINE_BUFFER_CAPACITY);
         std::stringstream ss;
         std::string tag;
         std::string directory;
@@ -146,11 +146,10 @@ int main(int argc, char* argv[]) {
         || flag == FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED) {
         listTags(tagEntryList);
     } else {
-        // We must not get here since the actual script must 
-        // validate the flags.
-        exit(2);
+        // Once here, we are expecting argv[1] to be a tag.
+        std::cout << tagEntryList[argv[1]].getDirectory();
     }
 
-    // std::cin.get();
+    std::cin.get();
     return 0;
 }
