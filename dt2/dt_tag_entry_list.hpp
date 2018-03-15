@@ -16,7 +16,8 @@ namespace dt2 {
         TagEntry operator[](std::string const& tag) const;
         std::vector<TagEntry>::const_iterator begin() const;
         std::vector<TagEntry>::const_iterator end() const;
-        void sort();
+        void sortByTags();
+        void sortByDirectories();
 
     private:
         std::vector<TagEntry> m_entries;

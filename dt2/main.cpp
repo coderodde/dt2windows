@@ -14,10 +14,11 @@
 #include <ShlObj.h>
 #include <windows.h>
 
-const std::string FLAG_LIST_TAGS_AND_DIRECTORIES = "-l";
-const std::string FLAG_LIST_TAGS_NO_DIRECTORIES = "-L";
-const std::string FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED = "-s";
-const std::string FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED = "-S";
+const std::string FLAG_LIST_TAGS_AND_DIRECTORIES = "-L";
+const std::string FLAG_LIST_TAGS_NO_DIRECTORIES = "-l";
+const std::string FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED = "-S";
+const std::string FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED = "-s";
+const std::string FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED_BY_DIRS = "-d";
 const std::string TAG_ENTRY_LIST_FILE_LOCATION = "\\.dt\\table";
 const size_t MAXIMUM_TAG_LENGTH = 12;
 
@@ -75,28 +76,18 @@ static size_t getMaximumTagLength(TagEntryList const& tagEntryList) {
     return maximumLengthTagIter->getTag().length();
 }
 
-static void listTagsAndDirectories(std::string const& flag, 
-                                   TagEntryList& tagEntryList) {
-    if (flag == FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED) {
-        tagEntryList.sort();
+static void listTags(TagEntryList const& tagEntryList) {
+    for (const TagEntry& tagEntry : tagEntryList) {
+        std::cout << tagEntry.getTag() << "\n";
     }
+}
 
+static void listTagsAndDirectories(TagEntryList const& tagEntryList) {
     size_t maximumTagLength = getMaximumTagLength(tagEntryList);
 
     for (TagEntry const& tagEntry : tagEntryList) {
         std::cout << std::setw(maximumTagLength) << std::left << tagEntry.getTag()
-                  << " " << tagEntry.getDirectory() << "\n";
-    }
-}
-
-static void listTagsOnly(std::string const& flag, 
-                         TagEntryList& tagEntryList) {
-    if (flag == FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED) {
-        tagEntryList.sort();
-    }
-
-    for (const TagEntry& tagEntry : tagEntryList) {
-        std::cout << tagEntry.getTag() << "\n";
+            << " " << tagEntry.getDirectory() << "\n";
     }
 }
 
@@ -138,18 +129,26 @@ int main(int argc, char* argv[]) {
     TagEntryList tagEntryList;
     ifs >> tagEntryList;
 
-    if (flag == FLAG_LIST_TAGS_AND_DIRECTORIES 
-        || flag == FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED) {
-        listTagsAndDirectories(flag, tagEntryList);
+    if (flag == FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED
+        || flag == FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED) {
+        tagEntryList.sortByTags();
+    }
+    else if (flag == FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED_BY_DIRS) {
+        tagEntryList.sortByDirectories();
+    }
+
+    if (flag == FLAG_LIST_TAGS_AND_DIRECTORIES
+        || flag == FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED
+        || flag == FLAG_LIST_TAGS_AND_DIRECTORIES_SORTED_BY_DIRS) {
+        listTagsAndDirectories(tagEntryList);
     }
     else if (flag == FLAG_LIST_TAGS_NO_DIRECTORIES
         || flag == FLAG_LIST_TAGS_NO_DIRECTORIES_SORTED) {
-        listTagsOnly(flag, tagEntryList);
-    }
-    else {
-        std::string targetTag = flag; // Just renaming.
-        std::string bestDirectory = matchTag(tagEntryList, targetTag);
-        std::cout << bestDirectory;
+        listTags(tagEntryList);
+    } else {
+        // We must not get here since the actual script must 
+        // validate the flags.
+        exit(2);
     }
 
     // std::cin.get();

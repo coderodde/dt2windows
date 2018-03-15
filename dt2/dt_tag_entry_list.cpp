@@ -65,12 +65,21 @@ namespace dt2 {
         return m_entries.cend();
     }
 
-    void TagEntryList::sort() {
+    void TagEntryList::sortByTags() {
         std::stable_sort(m_entries.begin(),
-            m_entries.end(),
-            [](TagEntry const& tagEntry1,
-                TagEntry const& tagEntry2) {
+                         m_entries.end(),
+                         [](TagEntry const& tagEntry1,
+                            TagEntry const& tagEntry2) {
             return tagEntry1.getTag() < tagEntry2.getTag();
+        });
+    }
+
+    void TagEntryList::sortByDirectories() {
+        std::stable_sort(m_entries.begin(),
+                         m_entries.end(),
+                         [](TagEntry const& tagEntry1,
+                            TagEntry const& tagEntry2) {
+            return tagEntry1.getDirectory() < tagEntry2.getDirectory();
         });
     }
 
